@@ -123,8 +123,6 @@ body { min-height: 100vh; background: linear-gradient(160deg, #0a0520 0%, #1a0a3
   </div>
 </div>
 <script>
-const API_KEY = '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';
-
 const starsEl = document.getElementById('stars');
 for(let i = 0; i < 60; i++) {
   const s = document.createElement('div');
@@ -150,6 +148,7 @@ document.getElementById('another-btn').addEventListener('click', function() {
   selections = { character: '', setting: '', theme: '' };
   document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('weave-btn').disabled = true;
+  document.getElementById('error-box').style.display = 'none';
   goTo('customize');
 });
 document.getElementById('home-btn').addEventListener('click', function() { goTo('home'); });
@@ -169,6 +168,7 @@ document.querySelectorAll('.choice-btn').forEach(function(btn) {
 document.getElementById('weave-btn').addEventListener('click', generateStory);
 
 async function generateStory() {
+  document.getElementById('error-box').style.display = 'none';
   goTo('loading');
   let moonIdx = 0;
   moonInterval = setInterval(function() {
@@ -180,11 +180,8 @@ async function generateStory() {
   const prompt = 'Write a magical, soothing bedtime story for young children (ages 4-8).\n' + nameStr + '\nMain character: ' + selections.character + '\nSetting: ' + selections.setting + '\nTheme: ' + selections.theme + '\n\nGuidelines:\n- Gentle, calming tone\n- About 250-300 words\n- Simple vocabulary\n- Happy, sleepy ending\n- No scary content\n- End with characters drifting to sleep\n\nWrite only the story, no title.';
   try {
     const response = await fetch('/api/story', {
-', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
