@@ -123,7 +123,7 @@ body { min-height: 100vh; background: linear-gradient(160deg, #0a0520 0%, #1a0a3
   </div>
 </div>
 <script>
-const API_KEY = 'YOUR-API-KEY-HERE';
+const API_KEY = 'PASTE-YOUR-API-KEY-HERE';
 
 const starsEl = document.getElementById('stars');
 for(let i = 0; i < 60; i++) {
@@ -144,24 +144,15 @@ function goTo(screen) {
   window.scrollTo(0, 0);
 }
 
-document.getElementById('begin-btn').addEventListener('click', function() {
-  goTo('customize');
-});
-
-document.getElementById('back-btn').addEventListener('click', function() {
-  goTo('home');
-});
-
+document.getElementById('begin-btn').addEventListener('click', function() { goTo('customize'); });
+document.getElementById('back-btn').addEventListener('click', function() { goTo('home'); });
 document.getElementById('another-btn').addEventListener('click', function() {
   selections = { character: '', setting: '', theme: '' };
   document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('weave-btn').disabled = true;
   goTo('customize');
 });
-
-document.getElementById('home-btn').addEventListener('click', function() {
-  goTo('home');
-});
+document.getElementById('home-btn').addEventListener('click', function() { goTo('home'); });
 
 document.querySelectorAll('.choice-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
@@ -192,13 +183,12 @@ async function generateStory() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': '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' ,
+        'x-api-key': API_KEY,
         'anthropic-version': '2023-06-01',
-'anthropic-dangerous-direct-browser-access': 'true'
-
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }]
       })
