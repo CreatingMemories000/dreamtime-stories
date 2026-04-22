@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Dreamtime Stories 🌙</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #0a0520 0%, #1a0a35 40%, #0d1a3a 70%, #0a2040 100%);
+    font-family: Georgia, 'Times New Roman', serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+  #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star { position: absolute; border-radius: 50%; background: white; }
+  @keyframes twinkle { from { opacity: 0.2; transform: scale(0.8); } to { opacity: 1; transform: scale(1.3); } }
+  @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes shimmer { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  .container { max-width: 600px; margin: 0 auto; padding: 30px 20px 80px; position: relative; z-index: 10; animation: fadeIn 0.6s ease forwards; }
+  .header { text-align: center; margin-bottom: 36px; }
+  .moon-icon { font-size: 56px; display: block; margin-bottom: 8px; animation: float 4s ease-in-out infinite; }
+  .header h1 { color: #f0e6ff; font-size: 30px; font-weight: normal; letter-spacing: 1px; text-shadow: 0 0 30px rgba(180,120,255,0.6); }
+  .header p { color: #9b7dca; font-size: 14px; margin-top: 8px; font-style: italic; }
+  .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 36px 28px; backdrop-filter: blur(12px); margin-bottom: 24px; }
+  .input-label { color: #9b7dca; font-size: 13px; display: block; margin-bottom: 8px; }
+  .name-input { background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 16px; color: #f0e6ff; font-size: 16px; font-family: Georgia, serif; width: 100%; outline: none; }
+  .name-input::placeholder { color: #4a3660; }
+  .welcome-text { color: #c4a8ff; font-size: 16px; line-height: 1.7; margin-bottom: 28px; text-align: center; }
+  .magic-btn { background: linear-gradient(135deg, #7c3aed, #4f46e5, #7c3aed); border: none; border-radius: 50px; color: white; padding: 16px 40px; font-size: 18px; font-family: Georgia, serif; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 30px rgba(124,58,237,0.5); display: block; margin: 0 auto; }
+  .magic-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .back-btn { background: none; border: none; color: #6b5280; cursor: pointer; font-size: 13px; font-family: Georgia, serif; display: block; margin: 12px auto 0; }
+  .outline-btn { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 50px; color: #c4a8ff; padding: 14px 28px; font-size: 15px; font-family: Georgia, serif; cursor: pointer; }
+  .section-title { color: #c4a8ff; font-size: 15px; margin: 0 0 12px; letter-spacing: 0.5px; }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .choice-btn { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 16px; color: #e8d5ff; padding: 12px 10px; cursor: pointer; font-size: 13px; font-family: Georgia, serif; transition: all 0.25s; text-align: center; }
+  .choice-btn.selected { background: rgba(180,120,255,0.3); border-color: #b47aff; box-shadow: 0 0 18px rgba(180,120,255,0.4); color: white; }
+  .error-box { background: rgba(255,100,100,0.15); border: 1px solid rgba(255,100,100,0.3); border-radius: 12px; padding: 12px 16px; color: #ffb3b3; margin-bottom: 20px; text-align: center; font-size: 14px; }
+  .loading-section { text-align: center; padding: 60px 20px; }
+  .loading-moon { font-size: 72px; margin-bottom: 20px; display: block; animation: float 1.5s ease-in-out infinite; }
+  .loading-text { color: #c4a8ff; font-size: 18px; margin-bottom: 8px; }
+  .loading-sub { color: #6b5280; font-size: 13px; font-style: italic; }
+  .dots { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #7c3aed; }
+  .story-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(180,120,255,0.2); border-radius: 24px; padding: 32px 28px; backdrop-filter: blur(12px); box-shadow: 0 0 60px rgba(124,58,237,0.15); margin-bottom: 24px; max-height: 55vh; overflow-y: auto; }
+  .story-text { color: #e8d5ff; font-size: 16px; line-height: 2; }
+  .cursor { display: inline-block; width: 2px; height: 18px; background: #c4b5fd; animation: blink 0.8s infinite; vertical-align: middle; margin-left: 2px; }
+  .story-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .sweet-dreams { text-align: center; color: #4a3660; font-size: 12px; margin-top: 20px; font-style: italic; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: rgba(180,120,255,0.3); border-radius: 4px; }
+  .screen { display: none; animation: fadeIn 0.5s ease; }
+  .screen.active { display: block; }
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div class="container">
+  <div class="header">
+    <span class="moon-icon">🌙</span>
+    <h1>Dreamtime Stories</h1>
+    <p>A magical bedtime story, just for you ✨</p>
+  </div>
+  <div class="screen active" id="screen-home">
+    <div class="card">
+      <p class="welcome-text">Ready for a bedtime adventure? Let's create a magical story made just for tonight. 🌟</p>
+      <label class="input-label">What's your name? (optional)</label>
+      <input class="name-input" id="childName" type="text" placeholder="e.g. Emma, Leo..." maxlength="20">
+      <br><br>
+      <button class="magic-btn" onclick="goTo('customize')">Begin the Magic ✨</button>
+    </div>
+  </div>
+  <div class="screen" id="screen-customize">
+    <div id="error-box" class="error-box" style="display:none"></div>
+    <h3 class="section-title">🌟 Choose your hero</h3>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="select('character',this,'🦁 Lion')">🦁 Lion</button>
+      <button class="choice-btn" onclick="select('character',this,'🐉 Dragon')">🐉 Dragon</button>
+      <button class="choice-btn" onclick="select('character',this,'🧚 Fairy')">🧚 Fairy</button>
+      <button class="choice-btn" onclick="select('character',this,'🦊 Fox')">🦊 Fox</button>
+      <button class="choice-btn" onclick="select('character',this,'🐻 Bear')">🐻 Bear</button>
+      <button class="choice-btn" onclick="select('character',this,'🧜 Mermaid')">🧜 Mermaid</button>
+      <button class="choice-btn" onclick="select('character',this,'🦄 Unicorn')">🦄 Unicorn</button>
+      <button class="choice-btn" onclick="select('character',this,'🐸 Frog')">🐸 Frog</button>
+    </div>
+    <h3 class="section-title">🗺️ Where does the story take place?</h3>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="select('setting',this,'🌲 Enchanted Forest')">🌲 Enchanted Forest</button>
+      <button class="choice-btn" onclick="select('setting',this,'🏰 Magic Castle')">🏰 Magic Castle</button>
+      <button class="choice-btn" onclick="select('setting',this,'🌊 Underwater Kingdom')">🌊 Underwater Kingdom</button>
+      <button class="choice-btn" onclick="select('setting',this,'☁️ Cloud Kingdom')">☁️ Cloud Kingdom</button>
+      <button class="choice-btn" onclick="select('setting',this,'🍄 Mushroom Village')">🍄 Mushroom Village</button>
+      <button class="choice-btn" onclick="select('setting',this,'🌙 Moon City')">🌙 Moon City</button>
+    </div>
+    <h3 class="section-title">💫 What's the story about?</h3>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="select('theme',this,'🤝 Friendship')">🤝 Friendship</button>
+      <button class="choice-btn" onclick="select('theme',this,'🦸 Bravery')">🦸 Bravery</button>
+      <button class="choice-btn" onclick="select('theme',this,'💡 Cleverness')">💡 Cleverness</button>
+      <button class="choice-btn" onclick="select('theme',this,'❤️ Kindness')">❤️ Kindness</button>
+      <button class="choice-btn" onclick="select('theme',this,'🔍 Discovery')">🔍 Discovery</button>
+      <button class="choice-btn" onclick="select('theme',this,'🎁 Sharing')">🎁 Sharing</button>
+    </div>
+    <button class="magic-btn" id="weave-btn" onclick="generateStory()" disabled>Weave the Story 🌙</button>
+    <button class="back-btn" onclick="goTo('home')">← Back</button>
+  </div>
+  <div class="screen" id="screen-loading">
+    <div class="loading-section">
+      <span class="loading-moon" id="loading-moon">🌑</span>
+      <p class="loading-text">The story fairies are writing...</p>
+      <p class="loading-sub">Sprinkling in some magic dust ✨</p>
+      <div class="dots">
+        <div class="dot" style="animation:shimmer 1.2s 0s infinite"></div>
+        <div class="dot" style="animation:shimmer 1.2s 0.3s infinite"></div>
+        <div class="dot" style="animation:shimmer 1.2s 0.6s infinite"></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen" id="screen-story">
+    <div class="story-card">
+      <p class="story-text" id="story-text"></p>
+    </div>
+    <div class="story-actions">
+      <button class="magic-btn" onclick="goTo('customize')" style="padding:14px 28px;font-size:15px;">Another Story 🌟</button>
+      <button class="outline-btn" onclick="goTo('home')">🏠 Home</button>
+    </div>
+    <p class="sweet-dreams">Sweet dreams 🌙 Time to close your eyes...</p>
+  </div>
+</div>
+<script>
+const starsEl=document.getElementById('stars');
+for(let i=0;i<60;i++){const s=document.createElement('div');s.className='star';const size=Math.random()*2.5+0.5;s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;animation:twinkle ${Math.random()*3+2}s ${Math.random()*4}s infinite alternate;opacity:0.7`;starsEl.appendChild(s);}
+let selections={character:'',setting:'',theme:''};
+const moonPhases=['🌑','🌒','🌓','🌔','🌕'];
+let moonInterval;
+function goTo(screen){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+screen).classList.add('active');window.scrollTo(0,0);}
+function select(type,btn,value){btn.closest('.choice-grid').querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');selections[type]=value;const ready=selections.character&&selections.setting&&selections.theme;document.getElementById('weave-btn').disabled=!ready;}
+async function generateStory(){goTo('loading');let moonIdx=0;moonInterval=setInterval(()=>{moonIdx=(moonIdx+1)%moonPhases.length;document.getElementById('loading-moon').textContent=moonPhases[moonIdx];},400);const name=document.getElementById('childName').value.trim();const nameStr=name?`The main child character is named ${name}.`:'';const prompt=`Write a magical, soothing bedtime story for young children (ages 4-8).\n${nameStr}\nMain character: ${selections.character}\nSetting: ${selections.setting}\nTheme/lesson: ${selections.theme}\n\nGuidelines:\n- Gentle, calming tone perfect for bedtime\n- About 250-300 words\n- Simple vocabulary kids understand\n- Has a warm, happy, sleepy ending\n- No scary content\n- End with characters drifting peacefully to sleep\n\nWrite only the story, no title needed.`;try{const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const data=await response.json();const text=data.content?.map(b=>b.text||'').join('')||'';if(!text)throw new Error('No story');clearInterval(moonInterval);goTo('story');typeStory(text);}catch(e){clearInterval(moonInterval);document.getElementById('error-box').textContent='Oops! The story fairies are resting. Try again!';document.getElementById('error-box').style.display='block';goTo('customize');}}
+function typeStory(text){const el=document.getElementById('story-text');el.innerHTML='';let i=0;const interval=setInterval(()=>{i+=3;el.innerHTML=text.slice(0,i)+(i<text.length?'<span class="cursor"></span>':'');if(i>=text.length)clearInterval(interval);},18);}
+</script>
+</body>
+</html>
